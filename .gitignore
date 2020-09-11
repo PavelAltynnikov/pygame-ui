@@ -1,0 +1,5 @@
+venv/
+view/__pycache__/
+model/__pycache__/
+presenter/__pycache__/
+.vscode/
