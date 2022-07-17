@@ -35,3 +35,11 @@ class Animation:
                 self._current_sprite_index = 0
                 self.animated = False
             self._hosts_image = self._sprites[int(self._current_sprite_index)]
+
+
+class NullableAnimation(Animation):
+    def __init__(self):
+        pass
+
+    def play(self, tick, speed=1):
+        pass

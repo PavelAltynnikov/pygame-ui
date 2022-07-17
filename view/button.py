@@ -1,101 +1,83 @@
 import pygame
-from typing import Callable
+from pygame.font import SysFont
+from pygame.rect import Rect
+from pygame.surface import Surface
+from model.sound import Sound, NullableSound
+from model.animations import Animation, NullableAnimation
+from view.geometry import Point, NullableSurface
+from view.event import Event
 
 
 class Button:
     def __init__(self):
-        self._size = (100, 50)
-        self._location = (0, 0)
-        self._center = self._calculate_center_point()
-        self._text = ''
-        self._font = pygame.font.SysFont('arial', 30)
-        self._color = (188, 188, 188)
-        self._focused = False
-        self.animation = None
-        self.sound = None
-        self.image = None
-        self.rect = pygame.rect.Rect(self._calculate_rect())
-        self.click_handler: Callable[[str], None]
+        self.size: tuple[float, float] = (100, 50)
+        self.location: Point = Point(x=0, y=0)
+        self.text: str = ''
+        self.sound: Sound = NullableSound()
+        self.image: Surface = NullableSurface()
+        self.animation: Animation = NullableAnimation()
+        self.click = Event()
+        self._rect: Rect = self._calculate_rect()
+        self._center: tuple[float, float] = self._calculate_center_point()
+        self._font = SysFont('arial', 30)
+        self._color: tuple[int, int, int] = (188, 188, 188)
+        self._focused: bool = False
 
     @property
-    def size(self):
-        return self._size
-
-    @size.setter
-    def size(self, value):
-        if isinstance(value, (tuple, list)):
-            self._size = value
-
-    @property
-    def location(self):
-        return self._location
-
-    @location.setter
-    def location(self, value):
-        if isinstance(value, (tuple, list)):
-            self._location = value
-
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
-    def text(self, value):
-        if isinstance(value, str):
-            self._text = value
-        else:
-            self._text = str(value)
-
-    @property
-    def focuse(self):
+    def is_focused(self):
         return self._focused
 
-    @focuse.setter
-    def focuse(self, is_focused):
-        if is_focused:
-            self._focused = True
-            if self.sound:
-                self.sound['select'].play()
-        else:
-            self._focused = False
-
-    def _calculate_rect(self):
-        return (
-            self._location[0], self._location[1],
-            self._location[0] + self._size[0], self._location[1] + self._size[1]
-        )
-
-    def _calculate_center_point(self):
-        return self._location[0] + self._size[0] / 2, self._location[1] + self._size[1] / 2
-
-    def on_click(self):
+    @is_focused.setter
+    def is_focused(self, is_focused):
+        self._focused = is_focused
+        if not is_focused:
+            return
         if self.sound:
-            self.sound['click'].play()
-        if self.click_handler:
-            self.click_handler(self._text)
+            self.sound['select'].play()
+
+    def mouse_on_me(self, x: int, y: int) -> bool:
+        return self._mouse_on_width(x) and self._mouse_on_height(y)
 
     def update(self):
-        self._center = self._calculate_center_point()
-        self.rect.center = self._center
-        self.rect.width = self._size[0]
-        self.rect.height = self._size[1]
+        self._rect = self._calculate_rect()
+        pass
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.surface.Surface):
         if self.image:
-            screen.blit(self.image, self.rect)
+            screen.blit(self.image, self._rect)
         else:
-            pygame.draw.rect(screen, self._color, self.rect)
-            if self._text:
-                render = self._font.render(self._text, True, (0, 0, 0))
+            pygame.draw.rect(screen, self._color, self._rect)
+            if self.text:
+                render = self._font.render(self.text, True, (0, 0, 0))
                 screen.blit(render, render.get_rect(center=(self._center)))
+
+    def _mouse_on_width(self, x):
+        return self.location.x <= x <= self._rect.width
+
+    def _mouse_on_height(self, y):
+        return self.location.y <= y <= self._rect.height
+
+    def _calculate_rect(self):
+        left = self.location.x
+        top = self.location.y
+        width = self.size[0]
+        height = self.size[1]
+
+        if not isinstance(self.image, NullableSurface):
+            rect = self.image.get_rect()
+            width = rect.width
+            height = rect.height
+
+        return Rect(left, top, left + width, top + height)
+
+    def _calculate_center_point(self):
+        return self.location.x + self.size[0] / 2, self.location.y + self.size[1] / 2
 
 
 if __name__ == '__main__':
     import os
     import sys
-    sys.path.append(r'D:\Development\Programming\Python\my_dev\space_sandbox')
-    from model.animations import Animation
-    from model.sound import Sound
+    sys.path.append(r'D:\Development\Programming\Python\games\space_sandbox')
 
     def create_image_object(path):
         if os.path.exists(path):
@@ -134,14 +116,14 @@ if __name__ == '__main__':
             if is_mouse_event(event):
                 for control in controls:
                     if is_mouse_on_control(event, control):
-                        if not control.focuse:
-                            control.focuse = True
+                        if not control.is_focused:
+                            control.is_focused = True
                     else:
-                        control.focuse = False
+                        control.is_focused = False
                 if is_click_event(event):
                     for control in controls:
-                        if control.focuse:
-                            control.on_click()
+                        if control.is_focused:
+                            control.click("сообщение")
 
     FPS = 60
     show = True
@@ -153,7 +135,7 @@ if __name__ == '__main__':
     button = Button()
     button.text = 'qwert'
     button.size = (200, 100)
-    button.location = (200, 100)
+    button.location = Point(200, 100)
     # button.image = create_image_object(
     #     r'resources\main_menu\buttons\pictures\start\button_start_0.png'
     # )
@@ -165,7 +147,7 @@ if __name__ == '__main__':
         r'resources\main_menu\buttons\pictures\start\button_start.png',
         r'resources\main_menu\buttons\pictures\start'
     )
-    button.click_handler = some_handler
+    button.click += some_handler
 
     controls = [button]
 

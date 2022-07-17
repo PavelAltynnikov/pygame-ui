@@ -13,3 +13,8 @@ class Sound:
 
     def __getitem__(self, key):
         return self._sounds[key]
+
+
+class NullableSound(Sound):
+    def __init__(self):
+        pass
