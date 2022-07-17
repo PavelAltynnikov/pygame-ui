@@ -2,10 +2,10 @@ import pygame
 from pygame.font import SysFont
 from pygame.rect import Rect
 from pygame.surface import Surface
-from model.sound import Sound, NullableSound
-from model.animations import Animation, NullableAnimation
-from view.geometry import Point, NullableSurface
-from view.event import Event
+from pygame_ui.sound import Sound, NullableSound
+from pygame_ui.animations import Animation, NullableAnimation
+from pygame_ui.geometry import Point, NullableSurface
+from pygame_ui.event import Event
 
 
 class Button:

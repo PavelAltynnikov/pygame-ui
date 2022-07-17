@@ -1,12 +1,17 @@
 import os
-import pygame
-from view.button import Button
-from view.geometry import Point
-from model.sound import Sound
-from model.animations import Animation
+import sys
 
-MAIN_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-RESOURCE_PATH = os.path.join(MAIN_PATH, 'resources', 'main_menu')
+EXAMPLES_PATH = os.path.dirname(os.path.realpath(__file__))
+ROOT_PATH = os.path.dirname(EXAMPLES_PATH)
+sys.path.append(ROOT_PATH)
+
+import pygame
+from pygame_ui.button import Button
+from pygame_ui.geometry import Point
+from pygame_ui.sound import Sound
+from pygame_ui.animations import Animation
+
+RESOURCE_PATH = os.path.join(EXAMPLES_PATH, 'resources', 'main_menu')
 BUTTON_PICTURES = os.path.join(RESOURCE_PATH, 'buttons', 'pictures')
 BUTTON_SOUNDS = os.path.join(RESOURCE_PATH, 'buttons', 'sounds')
 SCREEN_PICTURES = os.path.join(RESOURCE_PATH, 'screen', 'pictures')

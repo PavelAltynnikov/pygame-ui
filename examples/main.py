@@ -1,5 +1,5 @@
 import pygame
-from view.main_menu import MainMenu
+from main_menu import MainMenu
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 500
