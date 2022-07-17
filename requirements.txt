@@ -1,8 +1,6 @@
-autopep8==1.5.4
-flake8==3.8.3
+flake8==4.0.1
 mccabe==0.6.1
-pycodestyle==2.6.0
-pyflakes==2.2.0
-pygame==2.0.0.dev10
-rope==0.17.0
-toml==0.10.1
+pycodestyle==2.8.0
+pyflakes==2.4.0
+pygame==2.1.2
+rope==0.23.0

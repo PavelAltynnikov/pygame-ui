@@ -1,134 +1,166 @@
-import os
 import pygame
-from typing import Callable
+from pygame.font import SysFont
+from pygame.rect import Rect
+from pygame.surface import Surface
+from model.sound import Sound, NullableSound
+from model.animations import Animation, NullableAnimation
+from view.geometry import Point, NullableSurface
+from view.event import Event
 
 
 class Button:
-    def __init__(self, size, image_path, sound, animation, text):
-        self._start_image = self._create_image_object(image_path)
-        self._current_image = self._start_image
-        self._rect = self._create_rect(size)
-        self._text = text
-        self._focused = False
-        self._animation = animation
-        self._sound = sound
-        self.click_handler: Callable[[str], None]
+    def __init__(self):
+        self.size: tuple[float, float] = (100, 50)
+        self.location: Point = Point(x=0, y=0)
+        self.text: str = ''
+        self.sound: Sound = NullableSound()
+        self.image: Surface = NullableSurface()
+        self.animation: Animation = NullableAnimation()
+        self.click = Event()
+        self._rect: Rect = self._calculate_rect()
+        self._center: tuple[float, float] = self._calculate_center_point()
+        self._font = SysFont('arial', 30)
+        self._color: tuple[int, int, int] = (188, 188, 188)
+        self._focused: bool = False
 
-    def draw(self, screen):
-        if self._current_image:
-            screen.blit(self._current_image, self._rect)
+    @property
+    def is_focused(self):
+        return self._focused
 
-    def update(self, events, tick):
-        for event in events:
-            if self._is_mouse_event(event):
-                if self._is_mouse_on_button(event):
-                    self._get_focuse(tick)
-                    if self._is_mouse_click(event):
-                        self._on_button_click()
-                else:
-                    self._reset_main_states()
-                break
+    @is_focused.setter
+    def is_focused(self, is_focused):
+        self._focused = is_focused
+        if not is_focused:
+            return
+        if self.sound:
+            self.sound['select'].play()
 
-    def _is_mouse_event(self, event):
-        if hasattr(event, 'pos'):
-            return True
-        return False
+    def mouse_on_me(self, x: int, y: int) -> bool:
+        return self._mouse_on_width(x) and self._mouse_on_height(y)
 
-    def _is_mouse_on_button(self, event):
-        if self._rect.x <= event.pos[0] <= self._rect.x + self._rect.w and \
-                self._rect.y <= event.pos[1] <= self._rect.h + self._rect.y:
-            return True
-        return False
+    def update(self):
+        self._rect = self._calculate_rect()
+        pass
 
-    def _is_mouse_click(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            return True
-        return False
+    def draw(self, screen: pygame.surface.Surface):
+        if self.image:
+            screen.blit(self.image, self._rect)
+        else:
+            pygame.draw.rect(screen, self._color, self._rect)
+            if self.text:
+                render = self._font.render(self.text, True, (0, 0, 0))
+                screen.blit(render, render.get_rect(center=(self._center)))
 
-    def _get_focuse(self, tick):
-        self._animation.animated = True
-        self._animation.play(tick)
-        if not self._focused:
-            self._focused = True
-            self._sound['select'].play()
+    def _mouse_on_width(self, x):
+        return self.location.x <= x <= self._rect.width
 
-    def _reset_main_states(self):
-        self._focused = False
-        self._current_image = self._start_image
+    def _mouse_on_height(self, y):
+        return self.location.y <= y <= self._rect.height
 
-    def _on_button_click(self):
-        self._sound['click'].play()
-        if self.click_handler:
-            self.click_handler(self._text)
+    def _calculate_rect(self):
+        left = self.location.x
+        top = self.location.y
+        width = self.size[0]
+        height = self.size[1]
 
-    def _create_image_object(self, path):
+        if not isinstance(self.image, NullableSurface):
+            rect = self.image.get_rect()
+            width = rect.width
+            height = rect.height
+
+        return Rect(left, top, left + width, top + height)
+
+    def _calculate_center_point(self):
+        return self.location.x + self.size[0] / 2, self.location.y + self.size[1] / 2
+
+
+if __name__ == '__main__':
+    import os
+    import sys
+    sys.path.append(r'D:\Development\Programming\Python\games\space_sandbox')
+
+    def create_image_object(path):
         if os.path.exists(path):
             return pygame.image.load(path)
         return None
 
-    def _create_rect(self, size):
-        if self._current_image:
-            rect = self._current_image.get_rect()
-            rect.x = size[0]
-            rect.y = size[1]
-            return rect
-        return None
-
-    def _create_sound_object(self, path):
-        if os.path.exists(path):
-            return pygame.mixer.Sound(path)
-        return None
-
-
-if __name__ == '__main__':
-    import sys
-    sys.path.append(r'D:\Development\Programming\Python\my_dev\space_sandbox')
-    from model.animations import Animation
-    from model.sound import Sound
-
-    MAIN_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    RESOURCE_PATH = os.path.join(MAIN_PATH, 'resources', 'main_menu')
-    FPS = 60
-    pygame.init()
-    screen = pygame.display.set_mode((600, 400))
-    pygame.display.set_caption('space sandbox')
-    clock = pygame.time.Clock()
-    button = Button(
-        size=(200, 150),
-        image_path=r'resources\main_menu\buttons\pictures\start\button_start_0.png',
-        sound=Sound(
-            click=r'resources\main_menu\buttons\sounds\click.wav',
-            select=r'resources\main_menu\buttons\sounds\select.wav'
-        ),
-        animation=Animation(
-            r'resources\main_menu\buttons\pictures\start\button_start.png',
-            r'resources\main_menu\buttons\pictures\start'
-        ),
-        text='test'
-    )
-
     def some_handler(text):
         print(text)
 
-    button.click_handler = some_handler
-    show = True
+    def is_quit_event(event):
+        if event.type == pygame.QUIT:
+            return True
+        return False
+
+    def is_mouse_event(event):
+        if hasattr(event, 'pos'):
+            return True
+        return False
+
+    def is_click_event(event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            return True
+        return False
+
+    def is_mouse_on_control(event, control):
+        if control.rect.x <= event.pos[0] <= control.rect.x + control.rect.w and \
+                control.rect.y <= event.pos[1] <= control.rect.h + control.rect.y:
+            return True
+        return False
 
     def event_handler(events):
         global show
         for event in events:
-            if event.type == pygame.QUIT:
+            if is_quit_event(event):
                 show = False
+            if is_mouse_event(event):
+                for control in controls:
+                    if is_mouse_on_control(event, control):
+                        if not control.is_focused:
+                            control.is_focused = True
+                    else:
+                        control.is_focused = False
+                if is_click_event(event):
+                    for control in controls:
+                        if control.is_focused:
+                            control.click("сообщение")
+
+    FPS = 60
+    show = True
+    pygame.init()
+    screen = pygame.display.set_mode((600, 400))
+    pygame.display.set_caption('space sandbox')
+    clock = pygame.time.Clock()
+
+    button = Button()
+    button.text = 'qwert'
+    button.size = (200, 100)
+    button.location = Point(200, 100)
+    # button.image = create_image_object(
+    #     r'resources\main_menu\buttons\pictures\start\button_start_0.png'
+    # )
+    button.sound = Sound(
+        click=r'resources\main_menu\buttons\sounds\click.wav',
+        select=r'resources\main_menu\buttons\sounds\select.wav'
+    )
+    button.animation = Animation(
+        r'resources\main_menu\buttons\pictures\start\button_start.png',
+        r'resources\main_menu\buttons\pictures\start'
+    )
+    button.click += some_handler
+
+    controls = [button]
 
     def game_loop():
         while show:
-            tick = clock.tick(FPS)
+            clock.tick(FPS)
 
             screen.fill([0, 0, 0])
 
             events = pygame.event.get()
             event_handler(events)
 
-            button.update(events, tick)
+            button.update()
             button.draw(screen)
             pygame.display.update()
 
