@@ -1,29 +1,18 @@
-import os
-import sys
-
-EXAMPLES_PATH = os.path.dirname(os.path.realpath(__file__))
-ROOT_PATH = os.path.dirname(EXAMPLES_PATH)
-sys.path.append(ROOT_PATH)
-
+import resources
 import pygame
 from pygame_ui.button import Button
 from pygame_ui.geometry import Point
 from pygame_ui.sound import Sound
 from pygame_ui.animations import Animation
 
-RESOURCE_PATH = os.path.join(EXAMPLES_PATH, 'resources', 'main_menu')
-BUTTON_PICTURES = os.path.join(RESOURCE_PATH, 'buttons', 'pictures')
-BUTTON_SOUNDS = os.path.join(RESOURCE_PATH, 'buttons', 'sounds')
-SCREEN_PICTURES = os.path.join(RESOURCE_PATH, 'screen', 'pictures')
-SCREEN_SOUNDS = os.path.join(RESOURCE_PATH, 'screen', 'sounds')
 FPS = 10
 
 
 class MainMenu:
-    def __init__(self, screen, caption=''):
+    def __init__(self, screen: pygame.Surface, caption=''):
         pygame.display.set_caption(caption)
         self._screen = screen
-        self._image = pygame.image.load(os.path.join(SCREEN_PICTURES, 'space.jpg'))
+        self._image = resources.SPACE
         self._rect = self._image.get_rect()
         self._show = True
         self._controls: list[Button] = []
@@ -58,47 +47,31 @@ class MainMenu:
         self._btn_start = Button()
         self._btn_start.text = 'start'
         self._btn_start.location = Point(x=vertical_line, y=170)
-        self._btn_start.image = pygame.image.load(
-            os.path.join(BUTTON_PICTURES, 'start', 'button_start_0.png')
-        )
-        self._btn_start.sound = Sound(
-            click=os.path.join(BUTTON_SOUNDS, 'select.wav'),
-            select=os.path.join(BUTTON_SOUNDS, 'click.wav')
-        )
+        self._btn_start.image = resources.BUTTON_START_0
+        self._btn_start.sound = Sound(click=resources.SELECT, select=resources.CLICK)
         self._btn_start.animation = Animation(
-            os.path.join(BUTTON_PICTURES, 'start', 'button_start.png'),
-            os.path.join(BUTTON_PICTURES, 'start'),
+            resources.BUTTON_START_PATH,
+            resources.BUTTON_START_ROOT_PATH
         )
-        # self._btn_start.click += self._btn_start.sound['click'].play
 
         self._btn_settings = Button()
         self._btn_settings.text = 'settings'
         self._btn_settings.location = Point(x=vertical_line, y=230)
-        self._btn_settings.image = pygame.image.load(
-            os.path.join(BUTTON_PICTURES, 'settings', 'button_settings_0.png')
-        )
-        self._btn_settings.sound = Sound(
-            click=os.path.join(BUTTON_SOUNDS, 'select.wav'),
-            select=os.path.join(BUTTON_SOUNDS, 'click.wav')
-        )
+        self._btn_settings.image = resources.BUTTON_SETTINGS_0
+        self._btn_settings.sound = Sound(click=resources.SELECT, select=resources.CLICK)
         self._btn_settings.animation = Animation(
-            os.path.join(BUTTON_PICTURES, 'settings', 'button_settings.png'),
-            os.path.join(BUTTON_PICTURES, 'settings'),
+            resources.BUTTON_SETTINGS_PATH,
+            resources.BUTTON_SETTINGS_ROOT_PATH,
         )
 
         self._btn_exit = Button()
         self._btn_exit.text = 'exit'
         self._btn_exit.location = Point(x=vertical_line, y=290)
-        self._btn_exit.image = pygame.image.load(
-            os.path.join(BUTTON_PICTURES, 'exit', 'button_exit_0.png')
-        )
-        self._btn_exit.sound = Sound(
-            click=os.path.join(BUTTON_SOUNDS, 'select.wav'),
-            select=os.path.join(BUTTON_SOUNDS, 'click.wav')
-        )
+        self._btn_exit.image = resources.BUTTON_EXIT_0
+        self._btn_exit.sound = Sound(click=resources.SELECT, select=resources.CLICK)
         self._btn_exit.animation = Animation(
-            os.path.join(BUTTON_PICTURES, 'exit', 'button_exit.png'),
-            os.path.join(BUTTON_PICTURES, 'exit'),
+            resources.BUTTON_EXIT_PATH,
+            resources.BUTTON_EXIT_ROOT_PATH,
         )
 
         self._controls.append(self._btn_start)
@@ -106,9 +79,7 @@ class MainMenu:
         self._controls.append(self._btn_exit)
 
     def _play_sound(self):
-        sound = pygame.mixer.Sound(
-            os.path.join(SCREEN_SOUNDS, '8-Bit - OST Alien 3  (Dendy) - Level 1 (musicpro.me).mp3')
-        )
+        sound = resources.ALIEN
         sound.set_volume(0.3)
         sound.play()
 
