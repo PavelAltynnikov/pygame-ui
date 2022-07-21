@@ -55,7 +55,7 @@ class MainMenu:
             resources.BUTTON_SETTINGS_PATH,
             resources.BUTTON_SETTINGS_ROOT_PATH,
         )
-        self._btn_settings.click += self._on_start_click
+        self._btn_settings.click += self._on_settings_click
 
         self._btn_exit = Button()
         self._btn_exit.text = 'exit'
@@ -66,7 +66,7 @@ class MainMenu:
             resources.BUTTON_EXIT_PATH,
             resources.BUTTON_EXIT_ROOT_PATH,
         )
-        self._btn_exit.click += self._on_start_click
+        self._btn_exit.click += self._on_exit_click
 
         self._controls.append(self._btn_start)
         self._controls.append(self._btn_settings)
@@ -74,17 +74,18 @@ class MainMenu:
 
     def _on_start_click(self, sender, event_args):
         self._btn_start.sound['click'].play()
-        btn: Button = sender
-        print(btn.text)
+        if isinstance(sender, Button):
+            print(sender.text)
 
     def _on_settings_click(self, sender, event_args):
         self._btn_start.sound['click'].play()
-        btn: Button = sender
-        print(btn.text)
+        if isinstance(sender, Button):
+            print(sender.text)
 
     def _on_exit_click(self, sender, event_args):
         self._btn_start.sound['click'].play()
-        btn: Button = sender
+        if isinstance(sender, Button):
+            print(sender.text)
         self._show = False
 
     def _play_sound(self):
