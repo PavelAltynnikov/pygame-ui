@@ -9,7 +9,7 @@ FPS = 10
 
 
 class MainMenu:
-    def __init__(self, screen: pygame.Surface, caption=''):
+    def __init__(self, screen: pygame.surface.Surface, caption=''):
         pygame.display.set_caption(caption)
         self._screen = screen
         self._image = resources.SPACE
