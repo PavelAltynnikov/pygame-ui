@@ -28,7 +28,7 @@ BUTTON_START_PATH = os.path.join(BUTTON_START_ROOT_PATH, 'button_start.png')
 
 BUTTON_SETTINGS_ROOT_PATH = os.path.join(BUTTON_PICTURES, 'settings')
 BUTTON_SETTINGS_0_PATH = os.path.join(BUTTON_SETTINGS_ROOT_PATH, 'button_settings_0.png')
-BUTTON_SETTINGS_0 = pygame.image.load(BUTTON_START_0_PATH)
+BUTTON_SETTINGS_0 = pygame.image.load(BUTTON_SETTINGS_0_PATH)
 BUTTON_SETTINGS_PATH = os.path.join(BUTTON_SETTINGS_ROOT_PATH, 'button_settings.png')
 
 BUTTON_EXIT_ROOT_PATH = os.path.join(BUTTON_PICTURES, 'exit')
