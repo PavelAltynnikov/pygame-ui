@@ -19,15 +19,6 @@ class MainMenu:
         self._initialize_components()
         self._play_sound()
 
-    def set_start_click_handler(self, handler):
-        self._btn_start.click += handler
-
-    def set_settings_click_handler(self, handler):
-        self._btn_settings.click += handler
-
-    def set_exit_click_handler(self, handler):
-        self._btn_exit.click += handler
-
     def show(self):
         clock = pygame.time.Clock()
         while self._show:
@@ -53,6 +44,7 @@ class MainMenu:
             resources.BUTTON_START_PATH,
             resources.BUTTON_START_ROOT_PATH
         )
+        self._btn_start.click += self._on_start_click
 
         self._btn_settings = Button()
         self._btn_settings.text = 'settings'
@@ -63,6 +55,7 @@ class MainMenu:
             resources.BUTTON_SETTINGS_PATH,
             resources.BUTTON_SETTINGS_ROOT_PATH,
         )
+        self._btn_settings.click += self._on_start_click
 
         self._btn_exit = Button()
         self._btn_exit.text = 'exit'
@@ -73,10 +66,26 @@ class MainMenu:
             resources.BUTTON_EXIT_PATH,
             resources.BUTTON_EXIT_ROOT_PATH,
         )
+        self._btn_exit.click += self._on_start_click
 
         self._controls.append(self._btn_start)
         self._controls.append(self._btn_settings)
         self._controls.append(self._btn_exit)
+
+    def _on_start_click(self, sender, event_args):
+        self._btn_start.sound['click'].play()
+        btn: Button = sender
+        print(btn.text)
+
+    def _on_settings_click(self, sender, event_args):
+        self._btn_start.sound['click'].play()
+        btn: Button = sender
+        print(btn.text)
+
+    def _on_exit_click(self, sender, event_args):
+        self._btn_start.sound['click'].play()
+        btn: Button = sender
+        self._show = False
 
     def _play_sound(self):
         sound = resources.ALIEN
@@ -118,7 +127,7 @@ class MainMenu:
             elif self._is_click_event(event):
                 for control in self._controls:
                     if control.is_focused:
-                        control.click(control.text)
+                        control.click()
 
 
 if __name__ == '__main__':

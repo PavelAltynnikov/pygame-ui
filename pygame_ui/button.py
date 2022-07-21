@@ -5,7 +5,7 @@ from pygame.surface import Surface
 from pygame_ui.sound import Sound, NullableSound
 from pygame_ui.animations import Animation, NullableAnimation
 from pygame_ui.geometry import Point, NullableSurface
-from pygame_ui.event import Event
+from pygame_ui.event import Event, EventArgs
 
 
 class Button:
@@ -16,7 +16,7 @@ class Button:
         self.sound: Sound = NullableSound()
         self.image: Surface = NullableSurface()
         self.animation: Animation = NullableAnimation()
-        self.click = Event()
+        self.click = Event(self, EventArgs())
         self._rect: Rect = self._calculate_rect()
         self._center: tuple[float, float] = self._calculate_center_point()
         self._font = SysFont('arial', 30)
@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 if is_click_event(event):
                     for control in controls:
                         if control.is_focused:
-                            control.click("сообщение")
+                            control.click()
 
     FPS = 60
     show = True
