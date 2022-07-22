@@ -1,35 +1,23 @@
 import resources
 import pygame
+from pygame_ui.animations import Animation
 from pygame_ui.button import Button
+from pygame_ui.form import Form
 from pygame_ui.geometry import Point
 from pygame_ui.sound import Sound
-from pygame_ui.animations import Animation
 
 FPS = 10
 
 
-class MainMenu:
+class MainMenu(Form):
     def __init__(self, screen: pygame.surface.Surface, caption=''):
-        pygame.display.set_caption(caption)
+        super().__init__(screen, caption)
         self._screen = screen
         self._image = resources.SPACE
         self._rect = self._image.get_rect()
-        self._show = True
         self._controls: list[Button] = []
         self._initialize_components()
         self._play_sound()
-
-    def show(self):
-        clock = pygame.time.Clock()
-        while self._show:
-            self._screen.blit(self._image, self._rect)
-            events = pygame.event.get()
-            self._determine_focused_control()
-            self._event_handler(events)
-            self._update()
-            self._draw()
-            clock.tick(FPS)
-            pygame.display.update()
 
     def _initialize_components(self):
         rigth_offset = 250
@@ -92,43 +80,6 @@ class MainMenu:
         sound = resources.ALIEN
         sound.set_volume(0.3)
         sound.play()
-
-    def _determine_focused_control(self):
-        mx, my = pygame.mouse.get_pos()
-        for control in self._controls:
-            if control.mouse_on_me(mx, my):
-                if not control.is_focused:
-                    control.is_focused = True
-            else:
-                control.is_focused = False
-
-    def _update(self):
-        for control in self._controls:
-            control.update()
-
-    def _draw(self):
-        for control in self._controls:
-            control.draw(self._screen)
-
-    def _is_quit_event(self, event):
-        if event.type == pygame.QUIT:
-            return True
-        return False
-
-    def _is_click_event(self, event):
-        if event.type == pygame.MOUSEBUTTONUP:
-            return True
-        return False
-
-    def _event_handler(self, events):
-        for event in events:
-            if self._is_quit_event(event):
-                self._show = False
-                break
-            elif self._is_click_event(event):
-                for control in self._controls:
-                    if control.is_focused:
-                        control.click()
 
 
 if __name__ == '__main__':
