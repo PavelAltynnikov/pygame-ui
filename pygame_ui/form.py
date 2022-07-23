@@ -1,4 +1,9 @@
 import pygame
+from typing import Union
+
+class Control:
+    pass
+
 
 class Form:
     def __init__(self, screen: pygame.surface.Surface, title='', fps=60):
@@ -6,9 +11,39 @@ class Form:
         self._screen = screen
         self._fps = fps
         self._show = True
-        self._image = None
-        self._rect = None
-        self._controls = []
+        self._background_image: Union[pygame.Surface, None] = None
+        self._rectangle: Union[pygame.rect.Rect, None] = None
+        self._controls: list[Control] = []
+
+    @property
+    def width(self):
+        return self._screen.get_width()
+    
+    @property
+    def height(self):
+        return self._screen.get_height()
+
+    @property
+    def background_image(self):
+        return self._background_image
+
+    @background_image.setter
+    def background_image(self, value: pygame.Surface):
+        self._background_image = value
+
+    @property
+    def rectangle(self):
+        return self._rectangle
+
+    @rectangle.setter
+    def rectangle(self, value: pygame.rect.Rect):
+        self._rectangle = value
+
+    def add_control(self, control: Control):
+        self._controls.append(control)
+
+    def remove_control(self, control: Control):
+        self._controls.remove(control)
 
     def show(self):
         clock = pygame.time.Clock()
@@ -20,6 +55,9 @@ class Form:
             self._draw()
             clock.tick(self._fps)
             pygame.display.update()
+
+    def close(self):
+        self._show = False
 
     def _determine_focused_control(self):
         mx, my = pygame.mouse.get_pos()
@@ -56,8 +94,8 @@ class Form:
             control.update()
 
     def _draw(self):
-        if self._image:
-            self._screen.blit(self._image, self._rect)
+        if self._background_image:
+            self._screen.blit(self._background_image, self._rectangle)
         for control in self._controls:
             control.draw(self._screen)
 

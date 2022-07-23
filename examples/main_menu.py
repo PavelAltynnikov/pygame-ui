@@ -12,16 +12,14 @@ FPS = 10
 class MainMenu(Form):
     def __init__(self, screen: pygame.surface.Surface, caption=''):
         super().__init__(screen, caption)
-        self._screen = screen
-        self._image = resources.SPACE
-        self._rect = self._image.get_rect()
-        self._controls: list[Button] = []
+        self.background_image = resources.SPACE
+        self.rectangle = self.background_image.get_rect()
         self._initialize_components()
         self._play_sound()
 
     def _initialize_components(self):
         rigth_offset = 250
-        vertical_line = self._screen.get_width() - rigth_offset
+        vertical_line = self.width - rigth_offset
 
         self._btn_start = Button()
         self._btn_start.text = 'start'
@@ -56,9 +54,9 @@ class MainMenu(Form):
         )
         self._btn_exit.click += self._on_exit_click
 
-        self._controls.append(self._btn_start)
-        self._controls.append(self._btn_settings)
-        self._controls.append(self._btn_exit)
+        self.add_control(self._btn_start)
+        self.add_control(self._btn_settings)
+        self.add_control(self._btn_exit)
 
     def _on_start_click(self, sender, event_args):
         self._btn_start.sound['click'].play()
@@ -74,7 +72,7 @@ class MainMenu(Form):
         self._btn_start.sound['click'].play()
         if isinstance(sender, Button):
             print(sender.text)
-        self._show = False
+        self.close()
 
     def _play_sound(self):
         sound = resources.ALIEN
