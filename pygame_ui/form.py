@@ -1,5 +1,5 @@
 import pygame
-from typing import Union
+from typing import Optional
 
 class Control:
     pass
@@ -11,8 +11,8 @@ class Form:
         self._screen = screen
         self._fps = fps
         self._show = True
-        self._background_image: Union[pygame.Surface, None] = None
-        self._rectangle: Union[pygame.rect.Rect, None] = None
+        self._background_image: Optional[pygame.Surface] = None
+        self._rectangle: Optional[pygame.rect.Rect] = None
         self._controls: list[Control] = []
 
     @property
