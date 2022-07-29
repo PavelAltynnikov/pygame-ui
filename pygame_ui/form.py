@@ -96,6 +96,8 @@ class Form:
     def _draw(self):
         if self._background_image:
             self._screen.blit(self._background_image, self._rectangle)
+        else:
+            self._screen.fill((0, 0, 0))
         for control in self._controls:
             control.draw(self._screen)
 
