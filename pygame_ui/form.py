@@ -6,8 +6,8 @@ class Control:
 
 
 class Form:
-    def __init__(self, screen: pygame.surface.Surface, title='', fps=60):
-        pygame.display.set_caption(title)
+    def __init__(self, screen: pygame.surface.Surface, caption='', fps=60):
+        pygame.display.set_caption(caption)
         self._screen = screen
         self._fps = fps
         self._show = True
