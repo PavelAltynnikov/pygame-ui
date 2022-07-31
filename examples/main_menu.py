@@ -10,8 +10,8 @@ FPS = 10
 
 
 class MainMenu(Form):
-    def __init__(self, screen: pygame.surface.Surface, caption=''):
-        super().__init__(screen, caption)
+    def __init__(self, screen: pygame.surface.Surface):
+        super().__init__(screen)
         self.background_image = resources.SPACE
         self.rectangle = self.background_image.get_rect()
         self._initialize_components()
@@ -83,5 +83,5 @@ class MainMenu(Form):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1000, 500))
-    window = MainMenu(screen, 'asdf')
+    window = MainMenu(screen)
     window.show()
