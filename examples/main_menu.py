@@ -5,6 +5,7 @@ from pygame_ui.button import Button
 from pygame_ui.form import Form
 from pygame_ui.geometry import Point
 from pygame_ui.sound import Sound
+from settings_menu import SettingsMenu
 
 FPS = 10
 
@@ -67,6 +68,8 @@ class MainMenu(Form):
         self._btn_start.sound['click'].play()
         if isinstance(sender, Button):
             print(sender.text)
+        sm = SettingsMenu(self._screen)
+        sm.show()
 
     def _on_exit_click(self, sender, event_args):
         self._btn_start.sound['click'].play()
